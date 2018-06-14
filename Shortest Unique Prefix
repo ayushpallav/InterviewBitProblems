@@ -1,0 +1,60 @@
+class TrieNode{
+    public:
+        map<char,TrieNode*> child;
+        int count=0;
+        bool EOW = false;
+};
+void Trie_insert(TrieNode* root,string s)
+{
+    if(!s.empty())
+    {
+        char ch = s[0];
+        s.erase(s.begin());
+        auto it = root->child.find(ch);
+        if(root->child.empty() || it==root->child.end())
+        {
+            TrieNode* temp = new TrieNode;
+            if(s.empty())
+                temp->EOW = true;
+            root->child.insert(pair<char,TrieNode*>(ch,temp));
+            root->count++;
+            if(!s.empty())
+                Trie_insert(temp,s);
+        }
+        else if(it!=root->child.end())
+        {
+            root->count++;
+            Trie_insert(it->second,s);
+        }
+    }
+}
+void GC_util(TrieNode* root,string s,vector<string> &ans,string temp)
+{
+    if(root->child.size()==root->count)
+    {
+        if(!s.empty() && root->count>1)
+            temp += s[0];
+        ans.push_back(temp);
+        return;
+    }
+    char ch = s[0];
+    s.erase(s.begin());
+    temp += ch;
+    auto it = root->child.find(ch);
+    GC_util(it->second,s,ans,temp);
+    return;
+}
+void GC_prefix(TrieNode* root,string s,vector<string> &ans)
+{
+    GC_util(root,s,ans,"");
+}
+vector<string> Solution::prefix(vector<string> &A) {
+    int n = A.size();
+    TrieNode root;
+    for(int i=0;i<n;i++)
+        Trie_insert(&root,A[i]);
+    vector<string> ans;
+    for(int i=0;i<n;i++)
+        GC_prefix(&root,A[i],ans);
+    return ans;
+}
