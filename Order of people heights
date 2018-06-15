@@ -1,0 +1,16 @@
+vector<int> Solution::order(vector<int> &height, vector<int> &infronts) {
+    map<int,int , greater <int>> m;
+    vector<int> ans;
+    int n = height.size();
+    for(int i=0;i<n;i++)
+        m[height[i]] = infronts[i]; 
+        
+    for(auto it=m.begin();it!=m.end();it++)
+    {
+        if(ans.empty())
+            ans.push_back(it->first);
+        else
+            ans.insert(ans.begin()+it->second,it->first);
+    }
+    return ans;
+}
